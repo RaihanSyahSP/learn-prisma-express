@@ -1,7 +1,7 @@
 import prisma from "../db";
 import { comparePasswords, createJWT, hashPassword } from "../modules/auth";
 
-export const createNewUser = async (req, res) => {
+export const createNewUser = async (req, res, next) => {
   const { username, password } = req.body;
   try {
     const user = await prisma.user.create({
@@ -16,11 +16,8 @@ export const createNewUser = async (req, res) => {
     res.status(200);
     res.json(user);
   } catch (e) {
-    console.log(e);
-    res.status(500);
-    res.json({
-      message: "There was an error creating the user",
-    });
+    e.type = "input";
+    next(e);
   }
 };
 
